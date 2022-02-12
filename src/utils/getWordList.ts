@@ -7,8 +7,8 @@ import axios from "axios";
 export default async function () {
   if (checkFile('fiveWordList')) {
     try {
-      const data = fs.readFileSync('dist/fiveWordList.txt', 'utf-8');
-      return data;
+      const data = fs.readFileSync('dist/fiveWordList.txt', 'utf-8')
+      return dataTransform(data)
     } catch (err) {
       console.error(err)
       throw err
@@ -17,7 +17,7 @@ export default async function () {
 
   if (checkFile('wordList')) {
     try {
-      const data = fs.readFileSync('dist/wordList.txt', 'utf-8');
+      const data = fs.readFileSync('dist/wordList.txt', 'utf-8')
       return dataTransform(data)
     } catch (err) {
       console.error(err);
