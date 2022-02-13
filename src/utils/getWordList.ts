@@ -18,7 +18,7 @@ export default async function () {
   if (checkFile('wordList')) {
     try {
       const data = fs.readFileSync('dist/wordList.txt', 'utf-8')
-      return dataTransform(data)
+      return dataTransform(data, true)
     } catch (err) {
       console.error(err);
       throw err
@@ -27,7 +27,7 @@ export default async function () {
 
   try {
     const { data } = await axios.get('https://www.ime.usp.br/~pf/dicios/br-sem-acentos.txt')
-    return dataTransform(data)
+    return dataTransform(data, true)
   } catch (err) {
     console.log(err)
     throw err
@@ -39,7 +39,7 @@ function checkFile (file:string) {
   return fs.existsSync(`dist/${file}.txt`)
 }
 
-function dataTransform (data: string){
+function dataTransform (data: string, save: boolean = false){
   const allFiveLettersWords = []
   const allWords = data.split('\n')
 
@@ -47,7 +47,7 @@ function dataTransform (data: string){
     word.length === 5 && allFiveLettersWords.push(word)
   })
 
-  writeFile('dist/fiveWordList.txt' ,allFiveLettersWords.join('\n'))
+  save && writeFile('dist/fiveWordList.txt' ,allFiveLettersWords.join('\n'))
 
   return allFiveLettersWords;
 }

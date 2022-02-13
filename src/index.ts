@@ -6,25 +6,13 @@ import getWordList from './utils/getWordList'
 (async () => {
   console.clear()
   const allWords = await getWordList()
-  const tmp = {
-    green: [
-      { letter: 'B', index: 0 },
-      { letter: 'R', index: 3 }
-    ],
-    yellow: [ { letter: 'e', index: 1 }, { letter: 'd', index: 2 } ],
-    notIn: [ 'a', 'c', 'l' ]
-  }
-  
-  findWords(allWords, tmp)
 
-  // inquirer.prompt(questions).then((answers) => {
-  //   const word = validateWord(answers['word'])
-  //   word['notIn'] = answers['notLetter'].split('')
-
-  //   console.log(word)
-
-  //   findWords(allWords, word)
-  // });
+  inquirer.prompt(questions).then((answers) => {
+    const found = findWords(allWords, answers['word'], answers['notIn'])
+    console.log(`Você tem chances de acerto ${found.length}`)
+    console.log(`As palavras que você pode jogar são:`)
+    console.log(found)
+  })
 
 })()
 
@@ -40,40 +28,73 @@ const questions = [
   },
   {
     type: 'input',
-    name: 'notLetter',
+    name: 'notIn',
     message: 'Quais letras não existem'
   },
 ]
 
+function findWords(dictonary, word, lettersNotIn) {
+  const wordArray = word.split('')
+  const wordsThatFit = []
+  let haveRights = false
+  let haveNotInRightPlace = false
+  let wordRightCount = 0
+  const arrayOfNotInRightPlace = []
 
-function validateWord(guessedWord) {
-  const words = {
-    green: [],
-    yellow: []
-  }
-  
-  const arrayOfLetters = guessedWord.split('')
-
-  arrayOfLetters.forEach((letter, index) => {
-    if (letter !== '_' && letter === letter.toUpperCase()) {
-      words['green'].push({ letter, index })
-    } else if (letter !== '_') {
-      words['yellow'].push({ letter, index })
+  wordArray.forEach(letter => {
+    if (letter === letter.toUpperCase() && letter !== '_') {
+      haveRights = true
+      wordRightCount++
+    }
+    if (letter === letter.toLowerCase() && letter !== '_') {
+      haveNotInRightPlace = true
+      arrayOfNotInRightPlace.push(letter)
     }
   })
 
-  return words
-}
+  if (haveRights) {
+    dictonary.filter(dictionaryWord => {
+      const dictionaryWordArray = dictionaryWord.toUpperCase().split('')
+      let lettersGreen = 0
+      dictionaryWordArray.forEach((letter, index) => {
+        if (letter === wordArray[index]) {
+          lettersGreen++
+        }
+      })
 
-function findWords(allWords, word){
-  // TODO : check if not have word {}
-
-  console.log(word.green[0].letter)
-
-  const teste = allWords.find(e => {
-    return e.toUpperCase().indexOf(word.green[0].letter, 0)
-  })
-
-  console.log(teste)
+      if (lettersGreen === wordRightCount) {
+        wordsThatFit.push(dictionaryWord)
+      }
+    })
+  }
   
+  if (arrayOfNotInRightPlace) {
+    for (let index = wordsThatFit.length-1 ; index >= 0; index--) {
+      const word = wordsThatFit[index];
+      for (let j = 0; j < arrayOfNotInRightPlace.length; j++) {
+        const letter = arrayOfNotInRightPlace[j]
+        if (!word.includes(letter)) {
+          wordsThatFit.splice(index, 1)
+          break
+        }
+      }
+    }
+  }
+
+  if (wordsThatFit.length > 1) {
+    for (let index = wordsThatFit.length-1 ; index >= 0; index--) {
+      const word = wordsThatFit[index];
+      const lettersNotInArray = lettersNotIn.split('')
+      for (let j = 0; j < lettersNotInArray.length; j++) {
+        const letter = lettersNotInArray[j]
+        if (word.includes(letter)) {
+          wordsThatFit.splice(index, 1)
+          break
+        }
+      }
+ 
+    }
+  }
+
+  return wordsThatFit
 }
