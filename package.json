@@ -6,6 +6,7 @@
   "module": "type",
   "scripts": {
     "start": "tsc && node dist/index.js",
+    "best": "tsc && node dist/bestOpening.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

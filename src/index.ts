@@ -92,7 +92,6 @@ function findWords(dictonary, word, lettersNotIn) {
           break
         }
       }
- 
     }
   }
 
