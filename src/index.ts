@@ -73,7 +73,7 @@ function findWords(dictonary, word, lettersNotIn) {
       const word = wordsThatFit[index];
       for (let j = 0; j < arrayOfNotInRightPlace.length; j++) {
         const letter = arrayOfNotInRightPlace[j]
-        if (!word.includes(letter)) {
+        if (!word.toLowerCase().includes(letter)) {
           wordsThatFit.splice(index, 1)
           break
         }
