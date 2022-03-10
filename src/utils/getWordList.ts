@@ -26,7 +26,8 @@ export default async function () {
   }
 
   try {
-    const { data } = await axios.get('https://www.ime.usp.br/~pf/dicios/br-sem-acentos.txt')
+    const { data } = await axios.get('https://raw.githubusercontent.com/fserb/pt-br/master/palavras')
+    // const { data } = await axios.get('https://www.ime.usp.br/~pf/dicios/br-sem-acentos.txt')
     return dataTransform(data, true)
   } catch (err) {
     console.log(err)

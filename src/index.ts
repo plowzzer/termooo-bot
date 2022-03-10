@@ -34,6 +34,7 @@ const questions = [
 ]
 
 function findWords(dictonary, word, lettersNotIn) {
+  console.log('dic', dictonary)
   const wordArray = word.split('')
   const wordsThatFit = []
   let haveRights = false
