@@ -4,6 +4,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED='0'
 import * as fs from "fs";
 import axios from "axios";
 
+// urls
+const USP_SEM_ACENTOS = 'https://www.ime.usp.br/~pf/dicios/br-sem-acentos.txt'
+const FSERB_DICIO = 'https://raw.githubusercontent.com/fserb/pt-br/master/dicio'
+const FSERB_PALAVRAS = 'https://raw.githubusercontent.com/fserb/pt-br/master/palavras'
+
 export default async function () {
   if (checkFile('fiveWordList')) {
     try {
@@ -26,8 +31,7 @@ export default async function () {
   }
 
   try {
-    const { data } = await axios.get('https://raw.githubusercontent.com/fserb/pt-br/master/palavras')
-    // const { data } = await axios.get('https://www.ime.usp.br/~pf/dicios/br-sem-acentos.txt')
+    const { data } = await axios.get(FSERB_DICIO)
     return dataTransform(data, true)
   } catch (err) {
     console.log(err)
@@ -42,15 +46,21 @@ function checkFile (file:string) {
 
 function dataTransform (data: string, save: boolean = false){
   const allFiveLettersWords = []
+  const allFiveLettersNormalized = []
   const allWords = data.split('\n')
 
   allWords.forEach(word => {
     word.length === 5 && allFiveLettersWords.push(word)
   })
 
-  save && writeFile('dist/fiveWordList.txt' ,allFiveLettersWords.join('\n'))
+  allFiveLettersWords.forEach(word => {
+    const normalizedWord = word.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+    allFiveLettersNormalized.push(normalizedWord)
+  })
 
-  return allFiveLettersWords;
+  save && writeFile('dist/fiveWordList.txt', allFiveLettersNormalized.join('\n'))
+
+  return allFiveLettersNormalized;
 }
 
 function writeFile(file: string, data: string) {
